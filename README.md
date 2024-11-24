@@ -12,7 +12,7 @@ Let's get started!
 🎈 Include a brief description of the features your syntax extension provides. For example:
 -->
 
-**Julia Syntax** provides syntax highlighting and autocompletion for **Julia**.
+This extension for [Nova.app](https://nova.app) provides syntax highlighting and autocompletion for **Julia**.
 
 <!--
 🎈 It can also be helpful to include a screenshot or GIF showing your extension in action:
@@ -28,12 +28,8 @@ Let's get started!
 
 Julia Syntax currently supports the following features of Important Language:
 
-- Basic syntax highlighting
+- Syntax highlighting
+- Symbol highlighting (with a few issues)
+- Code folding for a variety of blocks
+- Experimental Language Server support through [LanguageServer.jl](https://github.com/julia-vscode/LanguageServer.jl)
 
-Foldable blocks are planned for a future update.
-
-<!--
-👋 That's it! Happy developing!
-
-P.S. If you'd like, you can remove these comments before submitting your extension 😉
--->
