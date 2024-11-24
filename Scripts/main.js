@@ -63,7 +63,7 @@ class JuliaLanguageServer {
 		if (env_path === null) {
 			var workspace_path = nova.path.join(nova.workspace.path, "Project.toml");
 			if (nova.workspace.contains(workspace_path)) {
-				var env_path = workspace_path;
+				var env_path = nova.workspace.path;
 			}
 		}
 		
@@ -79,9 +79,10 @@ class JuliaLanguageServer {
 		
 		// Add environment path if one was found.
 		if (env_path !== null) {
-			serverOptions.args.push(env_path)
+			serverOptions.args.push(env_path);
 		}
-		serverOptions.args.push("--debug")
+		
+		// serverOptions.args.push("--debug")
 		
 		var clientOptions = {
 			syntaxes: ["julia"],
@@ -99,12 +100,12 @@ class JuliaLanguageServer {
 		//Notify about LS starting and which environment we're starting in
 		let request = new NotificationRequest("julia-ls-environment");
 		request.title = nova.localize("LSP: Server starting");
-		request.body = nova.localize("Julia Language server starting with environment: " + serverOptions.args[serverOptions.args.length - 2]);
+		request.body = nova.localize("Julia Language server starting with environment: " + serverOptions.args[serverOptions.args.length - 1]);
 		nova.notifications.add(request)
 		var client = new LanguageClient('julia-lsp', 'Julia Language Server', serverOptions, clientOptions);
 		
-		try {
-			// Start the client
+		// Start the client
+		try {	
 			client.start();
 			
 			// Add the client to the subscriptions to be cleaned up
