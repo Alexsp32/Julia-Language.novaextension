@@ -1,0 +1,8 @@
+.typedef-italic {
+	font-style: italic;
+}
+
+.string {
+	font-style: italic;
+	background-color: green;
+}

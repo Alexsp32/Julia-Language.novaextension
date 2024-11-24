@@ -1,0 +1,21 @@
+{
+    "identifier": "alexsp32.JuliaSyntax",
+    "name": "Julia Syntax",
+    "organization": "Alex Spears",
+    "description": "Lorem ipsum, dolor sit amet.",
+    "version": "1.1",
+    "categories": ["languages"],
+    "entitlements": {
+        "process": true,
+        "filesystem": "readwrite"
+    },
+    "main": "main.js",
+    "config": [
+        {
+            "key": "julia.language-server-path",
+            "title": "Language Server Path",
+            "type": "path",
+            "placeholder": "julia"
+        }
+    ]
+}
