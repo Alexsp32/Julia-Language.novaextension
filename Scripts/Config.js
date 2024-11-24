@@ -1,3 +1,4 @@
+// Config code copied from https://github.com/nova-python/Python.novaextension?tab=MIT-1-ov-file with permission. 
 class Config {
 	constructor(prefix = null, defaultSuffix = "default") {
 		this.prefix = prefix || nova.extension.identifier;

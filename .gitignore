@@ -1,1 +1,5 @@
 .DS_Store
+
+# Julia Manifest
+Manifest.toml
+

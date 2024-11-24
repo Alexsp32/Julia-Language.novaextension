@@ -1,0 +1,23 @@
+[
+	{
+		"key": "JuliaLang.JuliaExecutablePath",
+		"title": "Julia executable path",
+		"description": "Required for the Language server to function.",
+		"type": "path",
+		"default": "/opt/homebrew/bin/julia"
+	},
+	{
+		"key": "JuliaLang.OverrideProjectPath",
+		"title": "Custom Project path",
+		"description": "By default, the extension tries to use a Project.toml file in your workspace directory. If that doesn't exist, it uses the general version-speicifc project path. Provide a different path to use here.",
+		"type": "path",
+		"default": null
+	},
+	{
+		"key": "JuliaLang.LanguageServerActive",
+		"title": "Use Julia Language server?",
+		"description": "Activate or deactivate Language server support",
+		"type": "boolean",
+		"default": true
+	}
+]

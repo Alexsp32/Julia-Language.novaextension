@@ -1,8 +1,12 @@
+const Config = require("Config.js");
+
+const config = new Config("JuliaLang");
+
 var langserver = null;
 
 exports.activate = function() {
 	// Do work when the extension is activated
-	langserver = new JuliaLanguageServer();
+	restart_server();
 }
 
 exports.deactivate = function() {
@@ -13,13 +17,30 @@ exports.deactivate = function() {
 	}
 }
 
+// Resolve the path to use and start the Language Server, removing previous instances. 
+function restart_server() {
+	langserver = new JuliaLanguageServer(config);
+	// Observe the configuration setting for the Julia binary location, and restart the server on change
+	nova.config.observe('JuliaLang.julia-executable-path', (path) => langserver.start(path));
+}
+
+const LS_Prefs = new Set([
+	// Our extension
+	"JuliaLang.JuliaExecutablePath",
+	"JuliaLang.OverrideProjectPath",
+	"JuliaLang.LanguageServerActive",
+]);
 
 class JuliaLanguageServer {
-	constructor() {
-		// Observe the configuration setting for the server's location, and restart the server on change
-		nova.config.observe('JuliaSyntax.language-server-path', function(path) {
-			this.start(path);
-		}, this);
+	constructor(config) {
+		this.config = config
+		for (const pref of LS_Prefs) {
+			nova.workspace.config.onDidChange(pref, (newValue, oldValue) => {
+				if (oldValue !== newValue) {
+					this.start();
+				}
+			});
+		}
 	}
 	
 	deactivate() {
@@ -32,25 +53,54 @@ class JuliaLanguageServer {
 			nova.subscriptions.remove(this.languageClient);
 		}
 		
-		// Use the default server path
-		if (!path) {
-			path = '/opt/homebrew/bin/julia';
+		// Check if LS requested
+		if (!this.config.get("LanguageServerActive", "boolean", false)) {
+			return;
+		}
+		
+		// Resolve Project env path
+		var env_path = this.config.get("OverrideProjectPath", "string", null);
+		if (env_path === null) {
+			var workspace_path = nova.path.join(nova.workspace.path, "Project.toml");
+			if (nova.workspace.contains(workspace_path)) {
+				var env_path = workspace_path;
+			}
 		}
 		
 		// Create the client
 		var serverOptions = {
-			path: path,
+			path: this.config.get("JuliaExecutablePath", "string", "/opt/homebrew/bin/julia"),
 			args: [
-				"+1.10",
+				"--project=" + nova.extension.path,
 				"-e",
-				"using LanguageServer;runserver()",
-				"--debug"
+				"using Pkg;Pkg.instantiate();using LanguageServer;runserver()",
 			]
 		};
+		
+		// Add environment path if one was found.
+		if (env_path !== null) {
+			serverOptions.args.push(env_path)
+		}
+		serverOptions.args.push("--debug")
+		
 		var clientOptions = {
 			syntaxes: ["julia"],
-			debug: true
+			debug: true,
+			// Not sure if needed, but server wouldn't initialise without previously. 
+			initializationOptions: {
+				capabilities: {
+					window: {
+						workDoneProgress: false
+					}
+				}
+			},
 		};
+		
+		//Notify about LS starting and which environment we're starting in
+		let request = new NotificationRequest("julia-ls-environment");
+		request.title = nova.localize("LSP: Server starting");
+		request.body = nova.localize("Julia Language server starting with environment: " + serverOptions.args[serverOptions.args.length - 2]);
+		nova.notifications.add(request)
 		var client = new LanguageClient('julia-lsp', 'Julia Language Server', serverOptions, clientOptions);
 		
 		try {
@@ -78,3 +128,8 @@ class JuliaLanguageServer {
 		}
 	}
 }
+
+
+// Nova editor commands
+
+nova.commands.register("JuliaLang.restartLS", (workspace) => restart_server())

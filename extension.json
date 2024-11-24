@@ -1,21 +1,23 @@
 {
-    "identifier": "alexsp32.JuliaSyntax",
-    "name": "Julia Syntax",
+    "identifier": "alexsp32.JuliaLang",
+    "name": "Julia Syntax + LSP",
     "organization": "Alex Spears",
-    "description": "Lorem ipsum, dolor sit amet.",
-    "version": "1.1",
+    "description": "Support for the Julia language, including Syntax highlighting and Language Server support",
+    "version": "1.0",
     "categories": ["languages"],
     "entitlements": {
         "process": true,
         "filesystem": "readwrite"
     },
     "main": "main.js",
-    "config": [
-        {
-            "key": "julia.language-server-path",
-            "title": "Language Server Path",
-            "type": "path",
-            "placeholder": "julia"
-        }
-    ]
+    "commands":{
+        "extensions": [
+            {
+                "title": "Restart Julia Language Server",
+                "command": "JuliaLang.restartLS"
+            }
+        ]
+    },
+    "config": "config.json",
+    "configWorkspace": "configWorkspace.json"
 }
