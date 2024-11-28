@@ -61,9 +61,11 @@ class JuliaLanguageServer {
 		// Resolve Project env path
 		var env_path = this.config.get("OverrideProjectPath", "string", null);
 		if (env_path === null) {
-			var workspace_path = nova.path.join(nova.workspace.path, "Project.toml");
-			if (nova.workspace.contains(workspace_path)) {
-				var env_path = nova.workspace.path;
+			if (nova.workspace.path !== null) {
+				var workspace_path = nova.path.join(nova.workspace.path, "Project.toml");
+				if (nova.workspace.contains(workspace_path)) {
+					var env_path = nova.workspace.path;
+				}
 			}
 		}
 		
@@ -74,7 +76,10 @@ class JuliaLanguageServer {
 				"--project=" + nova.extension.path,
 				"-e",
 				"using Pkg;Pkg.instantiate();using LanguageServer;runserver()",
-			]
+			],
+			env: {
+				"JULIA_PYTHONCALL_EXE": "@PyCall"
+			}
 		};
 		
 		// Add environment path if one was found.
