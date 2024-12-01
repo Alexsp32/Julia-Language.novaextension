@@ -155,11 +155,11 @@ let namedColorStrings = {
 // Color provider
 class JuliaColorAssistant {
 	constructor() {
-		this.namedColorRegex = new RegExp("^colorant\"([\\w].*)\"$")
+		this.namedColorRegex = new RegExp("colorant\"([\\w].*)\"")
 		this.hexRegex = new RegExp("colorant\"(#[a-fA-F0-9]{6})\"", "i");
 		this.hexShortRegex = new RegExp("colorant\"(#[a-fA-F0-9]{3})\"", "i");
-		//this.rgbRegex = new RegExp("rgb\\(\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})//\\s*\\)", "i")
-		//this.rbgaRegex = new RegExp("rgba\\(\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})//\\s*,\\s*([0-9]*\.?[0-9]+)\\s*\\)", "i")
+		this.rgbRegex = new RegExp("colorant\"rgb\\(\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})\\s*\\)\"", "i")
+		//this.rbgaRegex = new RegExp("colorant\"rgba\\(\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})\\s*,\\s*([0-1]*\\.\?[0-9]\+)\\s*\\)\"", "i");
 		//this.rgbPercentageRegex
 		//this.hslRegex
 		//this.hslaRegex
@@ -185,8 +185,8 @@ class JuliaColorAssistant {
 			this.hexRegex,
 			//this.hexaShortRegex
 			this.hexShortRegex,
-			//this.rgbaRegex,
-			//this.rgbRegex,
+			this.rgbaRegex,
+			this.rgbRegex,
 			//this.hslaRegex,
 			//this.hslRegex,
 		];
@@ -194,12 +194,10 @@ class JuliaColorAssistant {
 		let colors = [];
 		
 		let candidates = context.candidates;
-		console.log("Candidates:", candidates)
 		for (let candidate of candidates) {
 			let named_color_match = candidate.text.match(this.namedColorRegex)
 			let string = candidate.text;
 			let range = candidate.range;
-			console.log("Checking candidate:", string, range)
 			if (named_color_match!==null){
 				let namedColor = this.namedColors[named_color_match[1]];
 				if (namedColor) {
@@ -212,7 +210,6 @@ class JuliaColorAssistant {
 			}
 			for (let regex of regexes) {
 				let match = string.match(regex);
-				console.log("Regex matching", regex, string, match)
 				if (match) {
 					let color = this.parseColorMatch(match, regex, range);
 					if (color) {
@@ -228,15 +225,11 @@ class JuliaColorAssistant {
 	parseColorMatch(match, regex, range) {
 		// Parses a CSS color string into an color object
 		let position = range.start + match.index;
-		console.log("position", position);
 		let matchStr = match[0];
 		if (regex == this.hexRegex) {
 			let red = parseInt(match[1].substring(1, 3), 16);
-			console.log("Red string", match[1].substring(1, 3));
 			let green = parseInt(match[1].substring(3, 5), 16);
-			console.log("Green string", match[1].substring(3, 5));
 			let blue = parseInt(match[1].substring(5, 7), 16);
-			console.log("Blue string", match[1].substring(5,7));
 			
 			red = (red / 255.0);
 			green = (green / 255.0);
@@ -245,7 +238,6 @@ class JuliaColorAssistant {
 			let color = Color.rgb(red, green, blue, 1.0);
 			let range = new Range(position, position + matchStr.length);
 			let info = new ColorInformation(range, color, "hex");
-			console.log("Calculated color:", red, green, blue);
 			info.format = ColorFormat.rgb;
 			return info;
 		}
@@ -265,11 +257,9 @@ class JuliaColorAssistant {
 			let color = Color.rgb(red, green, blue, 1.0);
 			let range = new Range(position, position + matchStr.length);
 			let info = new ColorInformation(range, color, "hexs");
-			console.log("Calculated color:", red, green, blue);
 			info.format = ColorFormat.rgb;
 			return info;
-		}
-		/*
+		}/*
 		else if (regex == this.rgbaRegex) {
 			let red = parseInt(match[1]);
 			let green = parseInt(match[2]);
@@ -285,7 +275,7 @@ class JuliaColorAssistant {
 			let info = new ColorInformation(range, color, "rgba");
 			info.format = ColorFormat.rgb;
 			return info;
-		}
+		}*/
 		else if (regex == this.rgbRegex) {
 			let red = parseInt(match[1]);
 			let green = parseInt(match[2]);
@@ -300,7 +290,7 @@ class JuliaColorAssistant {
 			let info = new ColorInformation(range, color, "rgb");
 			info.format = ColorFormat.rgb;
 			return info;
-		}
+		}/*
 		else if (regex == this.hslaRegex) {
 			let hue = parseInt(match[1]);
 			let sat = parseFloat(match[2]);
