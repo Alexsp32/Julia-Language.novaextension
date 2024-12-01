@@ -26,9 +26,11 @@
         <multiline>
             <starts-with>
                 <expression>"""</expression>
+                <expression>#=</expression>
             </starts-with>
             <ends-with>
                 <expression>"""</expression>
+                <expression>=#</expression>
             </ends-with>
         </multiline>
     </comments>
@@ -41,5 +43,6 @@
         <highlights path="highlights.scm" />
         <folds path="folds.scm" />
         <symbols path="symbols.scm" />
+        <colors path="colors.scm" />
     </tree-sitter>
 </syntax>

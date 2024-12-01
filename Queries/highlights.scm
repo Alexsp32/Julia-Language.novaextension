@@ -19,11 +19,11 @@
 
 ; calls
 (call_expression
-  (identifier) @function.call)
+  (identifier) @function.call) @identifier.function
 
 (call_expression
   (field_expression
-    (identifier) @function.call .))
+    (identifier) @function.call .)) @identifier.function
 
 (broadcast_call_expression
   (identifier) @function.call)
@@ -41,7 +41,7 @@
 (macro_identifier) @function.macro
 
 (macro_identifier
-  (identifier) @function.macro) ; for any one using the variable highlight
+  (identifier) @function.macro); for any one using the variable highlight
 
 ; Builtins
 ((identifier) @function.builtin
@@ -511,7 +511,7 @@
 
 ; Match the dot in the @. macro
 (macro_identifier
-  (operator) @function.macro (#eq? @function.macro "."))
+  (operator) @function.macro (#eq? @function.macro ".")) 
 
 ; Macro and function definitions
 (signature

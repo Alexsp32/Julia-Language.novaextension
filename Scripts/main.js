@@ -1,6 +1,12 @@
+// Manage extension config
+
 const Config = require("Config.js");
 
 const config = new Config("JuliaLang");
+
+// Colors.jl color presentation
+const Colors = require("Colors.js");
+nova.assistants.registerColorAssistant(["julia"], Colors);
 
 var langserver = null;
 
