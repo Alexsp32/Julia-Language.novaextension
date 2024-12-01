@@ -58,26 +58,26 @@
 ; Types
 ; Definitions
 (abstract_definition
-  name: (identifier) @type.definition) @keyword
+  name: (identifier) @identifier.type.protocol) @keyword.construct
 
 (primitive_definition
-  name: (identifier) @type.definition) @keyword
+  name: (identifier) @identifier.type.class) @keyword.construct
 
 (struct_definition
-  name: (identifier) @type)
+  name: (identifier) @identifier.type.class) @keyword.construct
 
 (type_clause
   [
-    (identifier) @type
+    (identifier) @identifier
     (field_expression
-      (identifier) @type .)
+      (identifier) @identifier.property .)
   ])
 
 ; Annotations
 (parametrized_type_expression
   (_) @type
   (curly_expression
-    (_) @type))
+    (_) @type)) 
 
 (type_parameter_list
   (identifier) @type)
@@ -86,8 +86,8 @@
 ;  (identifier) "::" @type .)
 
 (typed_expression
-  (identifier) "::" @type .
-  ) @identifier.core
+  (identifier) @identifier.argument "::" (_) @markup.italic   
+  ) 
 
 (unary_typed_expression
   (identifier) @type .)
@@ -445,15 +445,15 @@
 
 (function_definition
   [
-    "function"
+    "function" @keyword.construct
     "end"
-  ] @keyword.function)
+  ])
 
 (do_clause
   [
     "do"
     "end"
-  ] @keyword.function)
+  ] @keyword.condition)
 
 (return_statement
   "return" @keyword.return)
@@ -511,30 +511,30 @@
 
 ; Match the dot in the @. macro
 (macro_identifier
-  (operator) @function.macro (#eq? @function.macro ".")) 
+  (operator) @function.macro (#eq? @function.macro ".")) @identifier.decorator
 
 ; Macro and function definitions
 (signature
   (call_expression
     [
-      (identifier) @function.method
-      (field_expression (identifier) @function.method .)
+      (identifier) @identifier.argument
+      (field_expression (identifier) @identifier.argument .)
     ]))
 
 ; Short function definitions like foo(x) = 2x
 (assignment
   .
   [
-    (call_expression (identifier) @function.definition)
-    (typed_expression . (call_expression (identifier) @function.definition))
-    (where_expression . (call_expression (identifier) @function.definition))
-    (where_expression . (typed_expression . (call_expression (identifier) @function.definition)))
-    (call_expression (field_expression (identifier) @function.definition .))
-    (typed_expression . (call_expression (field_expression (identifier) @function.definition .)))
-    (where_expression . (call_expression (field_expression (identifier) @function.definition .)))
+    (call_expression (identifier) @definition.function)
+    (typed_expression . (call_expression (identifier) @definition.function))
+    (where_expression . (call_expression (identifier) @definition.function))
+    (where_expression . (parametrized_type_expression . (call_expression (identifier) @definition.function)))
+    (call_expression (field_expression (identifier) @definition.function .))
+    (typed_expression . (call_expression (field_expression (identifier) @definition.function .)))
+    (where_expression . (call_expression (field_expression (identifier) @definition.function .)))
     (where_expression . (typed_expression . (call_expression (field_expression (identifier) @function.definition .))))
   ]
-  (operator) @keyword.function)
+  (operator) @keyword.function) 
 
 ; Literals
 (boolean_literal
