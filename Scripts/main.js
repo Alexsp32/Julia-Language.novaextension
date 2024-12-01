@@ -91,7 +91,7 @@ class JuliaLanguageServer {
 		
 		var clientOptions = {
 			syntaxes: ["julia"],
-			debug: true,
+			debug: false,
 			// Not sure if needed, but server wouldn't initialise without previously. 
 			initializationOptions: {
 				capabilities: {
