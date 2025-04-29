@@ -11,6 +11,16 @@
     },
     "main": "main.js",
     "commands":{
+        "editor": [
+            {
+                "title": "Format Julia file",
+                "command": "JuliaLang.run_format_on_current_file",
+                "when": "editorHasFocus && documentHasPath",
+                "filters": {
+                    "syntaxes": ["julia", "Julia"]
+                }
+            }
+        ],
         "extensions": [
             {
                 "title": "Restart Julia Language Server",

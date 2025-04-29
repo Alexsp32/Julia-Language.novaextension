@@ -142,6 +142,35 @@ class JuliaLanguageServer {
 }
 
 
+// JuliaFormatter for current file
+function run_format_on_current_file(editor) {
+	// ensure document is saved to disk with all changes. 
+	var doc = editor.document
+	if (doc.isDirty == true) {
+		editor.save()
+	}
+	var cmd = nova.workspace.config.get("JuliaLang.JuliaExecutablePath", "string", "/opt/homebrew/bin/julia")
+	let process = new Process(cmd, {
+		cwd: nova.workspace.path,
+		args: [
+			"--project=" + nova.extension.path,
+			"-e",
+			"using Pkg;Pkg.instantiate();using JuliaFormatter;format_file(\"" + doc.path + "\")"
+		]
+	})
+	process.onDidExit((code) => {
+		if (code == 0) {
+			//Notify about LS starting and which environment we're starting in
+			let request = new NotificationRequest("julia-ls-environment");
+			request.title = nova.localize("JuliaFormat.jl");
+			request.body = nova.localize("Successfully formatted file");
+			nova.notifications.add(request)
+		}
+	})
+	process.start()
+}
+
 // Nova editor commands
 
 nova.commands.register("JuliaLang.restartLS", (workspace) => restart_server())
+nova.commands.register("JuliaLang.run_format_on_current_file", (editor) => run_format_on_current_file(editor))
